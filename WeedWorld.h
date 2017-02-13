@@ -8,8 +8,8 @@
 //     to view the full license, visit:
 //         github.com/ahnt/MABE/wiki/License
 
-#ifndef __BasicMarkovBrainTemplate__BerryWorld__
-#define __BasicMarkovBrainTemplate__BerryWorld__
+#ifndef __BasicMarkovBrainTemplate__WeedWorld__
+#define __BasicMarkovBrainTemplate__WeedWorld__
 
 #include <iostream>
 #include <fstream>
@@ -21,7 +21,7 @@
 
 using namespace std;
 
-class BerryWorld: public AbstractWorld {
+class WeedWorld: public AbstractWorld {
 private:
 	int outputNodesCount, inputNodesCount;
 public:
@@ -193,7 +193,7 @@ public:
 
 	map<string,map<string,WorldMap>> worldMaps; // [fileName][mapName]
 
-	BerryWorld(shared_ptr<ParametersTable> _PT = nullptr);
+	WeedWorld(shared_ptr<ParametersTable> _PT = nullptr);
 
 
 	// old evaluate with group eval (keep for now so we can move it into berry world
@@ -232,7 +232,7 @@ public:
 	// if lastfood < 0, do not consider last food, pick randomly
 	// if
 	int pickFood(int lastfood) {
-		//cout << "In BerryWorld::pickFood(int lastfood)\n";
+		//cout << "In WeedWorld::pickFood(int lastfood)\n";
 		int lookup, counter, pick;
 		if (lastfood < 0) {  // if lastfood is < 0 (or was 0) then return a random food
 			lookup = Random::getInt(1, foodRatioTotal);  // get a random int [1,sum of food ratios]
@@ -244,11 +244,11 @@ public:
 			}
 		} else {  // if given a last food, pick a food that is not that.
 			if (lastfood > foodTypes) {
-				cout << "ERROR: In BerryWorld::pickFood() - lastfood > foodTypes (i.e. last food eaten is not in foodTypes!)\nExiting.\n\n";
+				cout << "ERROR: In WeedWorld::pickFood() - lastfood > foodTypes (i.e. last food eaten is not in foodTypes!)\nExiting.\n\n";
 				exit(1);
 			}
 			if (foodRatioTotal - foodRatioLookup[lastfood] == 0) {
-				cout << "ERROR: In BerryWorld::pickFood() : lastfood is not <= 0, and foodTypes = 1.\nThere is only one foodType! Pick can not be a different foodType\n\nExiting";
+				cout << "ERROR: In WeedWorld::pickFood() : lastfood is not <= 0, and foodTypes = 1.\nThere is only one foodType! Pick can not be a different foodType\n\nExiting";
 				exit(1);
 			}
 			lookup = Random::getInt(1, foodRatioTotal - foodRatioLookup[lastfood]);  // get a random int [1,sum of food ratios] but leave out the ratio of last food
@@ -267,7 +267,7 @@ public:
 				counter += foodRatioLookup[pick];  // add this new picks ratio to counter
 			}
 		}
-		//cout << "  Leaving BerryWorld::pickFood(int lastfood)\n";
+		//cout << "  Leaving WeedWorld::pickFood(int lastfood)\n";
 		return pick;
 
 	}
@@ -327,11 +327,11 @@ public:
 		}
 
 		if ((randomWalls >= WorldX * WorldY) && !borderWalls) {
-			cout << "In BerryWorld::makeTestGrid() To many random walls... exiting!" << endl;
+			cout << "In WeedWorld::makeTestGrid() To many random walls... exiting!" << endl;
 			exit(1);
 		}
 		if ((randomWalls >= (WorldX - 2) * (WorldY - 2)) && borderWalls) {
-			cout << "In BerryWorld::makeTestGrid() To many random walls... exiting!" << endl;
+			cout << "In WeedWorld::makeTestGrid() To many random walls... exiting!" << endl;
 			exit(1);
 		}
 
@@ -364,4 +364,4 @@ public:
 	void SaveWorldState(string fileName, vector<int> grid, vector<int> vistedGrid, vector<pair<int, int>> currentLocation, vector<int> facing, bool reset = false);
 };
 
-#endif /* defined(__BasicMarkovBrainTemplate__BerryWorld__) */
+#endif /* defined(__BasicMarkovBrainTemplate__WeedWorld__) */

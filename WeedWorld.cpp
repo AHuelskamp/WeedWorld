@@ -8,95 +8,95 @@
 //     to view the full license, visit:
 //         github.com/ahnt/MABE/wiki/License
 
-#include "BerryWorld.h"
+#include "WeedWorld.h"
 
-shared_ptr<ParameterLink<double>> BerryWorld::TSKPL = Parameters::register_parameter("WORLD_BERRY-taskSwitchingCost", 1.4, "cost to change food sources");
-shared_ptr<ParameterLink<int>> BerryWorld::worldUpdatesPL = Parameters::register_parameter("WORLD_BERRY-worldUpdates", 400, "amount of time a brain is tested");
-shared_ptr<ParameterLink<double>> BerryWorld::worldUpdatesBaisedOnInitialPL = Parameters::register_parameter("WORLD_BERRY-worldUpdatesBaisedOnInitial", 0.0, "if greater then 0 then worldUpdates will be this value * number of food in world at worldUpdate 0");
+shared_ptr<ParameterLink<double>> WeedWorld::TSKPL = Parameters::register_parameter("WORLD_BERRY-taskSwitchingCost", 1.4, "cost to change food sources");
+shared_ptr<ParameterLink<int>> WeedWorld::worldUpdatesPL = Parameters::register_parameter("WORLD_BERRY-worldUpdates", 400, "amount of time a brain is tested");
+shared_ptr<ParameterLink<double>> WeedWorld::worldUpdatesBaisedOnInitialPL = Parameters::register_parameter("WORLD_BERRY-worldUpdatesBaisedOnInitial", 0.0, "if greater then 0 then worldUpdates will be this value * number of food in world at worldUpdate 0");
 
-shared_ptr<ParameterLink<int>> BerryWorld::foodTypesPL = Parameters::register_parameter("WORLD_BERRY-foodTypes", 2, "number of types of food");
-shared_ptr<ParameterLink<double>> BerryWorld::rewardForFood0PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood0", 0.0, "reward for eating a Food0");
-shared_ptr<ParameterLink<double>> BerryWorld::rewardForFood1PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood1", 1.0, "reward for eating a Food1");
-shared_ptr<ParameterLink<double>> BerryWorld::rewardForFood2PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood2", 1.0, "reward for eating a Food2");
-shared_ptr<ParameterLink<double>> BerryWorld::rewardForFood3PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood3", 1.0, "reward for eating a Food3");
-shared_ptr<ParameterLink<double>> BerryWorld::rewardForFood4PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood4", 1.0, "reward for eating a Food4");
-shared_ptr<ParameterLink<double>> BerryWorld::rewardForFood5PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood5", 1.0, "reward for eating a Food5");
-shared_ptr<ParameterLink<double>> BerryWorld::rewardForFood6PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood6", 1.0, "reward for eating a Food6");
-shared_ptr<ParameterLink<double>> BerryWorld::rewardForFood7PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood7", 1.0, "reward for eating a Food7");
-shared_ptr<ParameterLink<double>> BerryWorld::rewardForFood8PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood8", 1.0, "reward for eating a Food8");
+shared_ptr<ParameterLink<int>> WeedWorld::foodTypesPL = Parameters::register_parameter("WORLD_BERRY-foodTypes", 2, "number of types of food");
+shared_ptr<ParameterLink<double>> WeedWorld::rewardForFood0PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood0", 0.0, "reward for eating a Food0");
+shared_ptr<ParameterLink<double>> WeedWorld::rewardForFood1PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood1", 1.0, "reward for eating a Food1");
+shared_ptr<ParameterLink<double>> WeedWorld::rewardForFood2PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood2", 1.0, "reward for eating a Food2");
+shared_ptr<ParameterLink<double>> WeedWorld::rewardForFood3PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood3", 1.0, "reward for eating a Food3");
+shared_ptr<ParameterLink<double>> WeedWorld::rewardForFood4PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood4", 1.0, "reward for eating a Food4");
+shared_ptr<ParameterLink<double>> WeedWorld::rewardForFood5PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood5", 1.0, "reward for eating a Food5");
+shared_ptr<ParameterLink<double>> WeedWorld::rewardForFood6PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood6", 1.0, "reward for eating a Food6");
+shared_ptr<ParameterLink<double>> WeedWorld::rewardForFood7PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood7", 1.0, "reward for eating a Food7");
+shared_ptr<ParameterLink<double>> WeedWorld::rewardForFood8PL = Parameters::register_parameter("WORLD_BERRY-rewardForFood8", 1.0, "reward for eating a Food8");
 
-shared_ptr<ParameterLink<double>> BerryWorld::rewardForTurnPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-rewardForTurn", 0.0, "reward for turning");
-shared_ptr<ParameterLink<double>> BerryWorld::rewardForMovePL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-rewardForMove", 0.0, "reward for moving");
+shared_ptr<ParameterLink<double>> WeedWorld::rewardForTurnPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-rewardForTurn", 0.0, "reward for turning");
+shared_ptr<ParameterLink<double>> WeedWorld::rewardForMovePL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-rewardForMove", 0.0, "reward for moving");
 
-shared_ptr<ParameterLink<int>> BerryWorld::ratioFood0PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood0", 0, "Relative likelihood to leave empty space empty");
-shared_ptr<ParameterLink<int>> BerryWorld::ratioFood1PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood1", 1, "Relative likelihood to place Food1");
-shared_ptr<ParameterLink<int>> BerryWorld::ratioFood2PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood2", 1, "Relative likelihood to place Food2");
-shared_ptr<ParameterLink<int>> BerryWorld::ratioFood3PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood3", 1, "Relative likelihood to place Food3");
-shared_ptr<ParameterLink<int>> BerryWorld::ratioFood4PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood4", 1, "Relative likelihood to place Food4");
-shared_ptr<ParameterLink<int>> BerryWorld::ratioFood5PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood5", 1, "Relative likelihood to place Food5");
-shared_ptr<ParameterLink<int>> BerryWorld::ratioFood6PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood6", 1, "Relative likelihood to place Food6");
-shared_ptr<ParameterLink<int>> BerryWorld::ratioFood7PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood7", 1, "Relative likelihood to place Food7");
-shared_ptr<ParameterLink<int>> BerryWorld::ratioFood8PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood8", 1, "Relative likelihood to place Food8");
+shared_ptr<ParameterLink<int>> WeedWorld::ratioFood0PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood0", 0, "Relative likelihood to leave empty space empty");
+shared_ptr<ParameterLink<int>> WeedWorld::ratioFood1PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood1", 1, "Relative likelihood to place Food1");
+shared_ptr<ParameterLink<int>> WeedWorld::ratioFood2PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood2", 1, "Relative likelihood to place Food2");
+shared_ptr<ParameterLink<int>> WeedWorld::ratioFood3PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood3", 1, "Relative likelihood to place Food3");
+shared_ptr<ParameterLink<int>> WeedWorld::ratioFood4PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood4", 1, "Relative likelihood to place Food4");
+shared_ptr<ParameterLink<int>> WeedWorld::ratioFood5PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood5", 1, "Relative likelihood to place Food5");
+shared_ptr<ParameterLink<int>> WeedWorld::ratioFood6PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood6", 1, "Relative likelihood to place Food6");
+shared_ptr<ParameterLink<int>> WeedWorld::ratioFood7PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood7", 1, "Relative likelihood to place Food7");
+shared_ptr<ParameterLink<int>> WeedWorld::ratioFood8PL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-replacementRatioFood8", 1, "Relative likelihood to place Food8");
 
-shared_ptr<ParameterLink<int>> BerryWorld::WorldXPL = Parameters::register_parameter("WORLD_BERRY-worldX", 8, "world X size");
-shared_ptr<ParameterLink<int>> BerryWorld::WorldYPL = Parameters::register_parameter("WORLD_BERRY-worldY", 8, "world Y size");
-shared_ptr<ParameterLink<bool>> BerryWorld::borderWallsPL = Parameters::register_parameter("WORLD_BERRY-makeBorderWalls", true, "if true world will have a bounding wall");
-shared_ptr<ParameterLink<int>> BerryWorld::randomWallsPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-makeRandomWalls", 0, "add this many walls to the world");
+shared_ptr<ParameterLink<int>> WeedWorld::WorldXPL = Parameters::register_parameter("WORLD_BERRY-worldX", 8, "world X size");
+shared_ptr<ParameterLink<int>> WeedWorld::WorldYPL = Parameters::register_parameter("WORLD_BERRY-worldY", 8, "world Y size");
+shared_ptr<ParameterLink<bool>> WeedWorld::borderWallsPL = Parameters::register_parameter("WORLD_BERRY-makeBorderWalls", true, "if true world will have a bounding wall");
+shared_ptr<ParameterLink<int>> WeedWorld::randomWallsPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-makeRandomWalls", 0, "add this many walls to the world");
 
-shared_ptr<ParameterLink<bool>> BerryWorld::clearOutputsPL = Parameters::register_parameter("WORLD_BERRY-clearOutputs", false, "if true outputs will be cleared on each world update");
+shared_ptr<ParameterLink<bool>> WeedWorld::clearOutputsPL = Parameters::register_parameter("WORLD_BERRY-clearOutputs", false, "if true outputs will be cleared on each world update");
 
-shared_ptr<ParameterLink<bool>> BerryWorld::allowMoveAndEatPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-allowMoveAndEat", false, "if true, the brain can move and eat in the same world update");
-shared_ptr<ParameterLink<bool>> BerryWorld::senseDownPL = Parameters::register_parameter("WORLD_BERRY-senseDown", true, "if true, Agent can sense what it's standing on");
-shared_ptr<ParameterLink<bool>> BerryWorld::senseFrontPL = Parameters::register_parameter("WORLD_BERRY-senseFront", true, "if true, Agent can sense what's in front of it");
-shared_ptr<ParameterLink<bool>> BerryWorld::senseFrontSidesPL = Parameters::register_parameter("WORLD_BERRY-senseFrontSides", false, "if true, Agent can sense what's in front to the left and right of it");
-shared_ptr<ParameterLink<bool>> BerryWorld::senseWallsPL = Parameters::register_parameter("WORLD_BERRY-senseWalls", false, "if true, Agent can sense Walls");
-shared_ptr<ParameterLink<bool>> BerryWorld::senseOtherPL = Parameters::register_parameter("WORLD_BERRY-senseOther", false, "if true, Agents will be able to sense other agents (if there are other agents).");
+shared_ptr<ParameterLink<bool>> WeedWorld::allowMoveAndEatPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-allowMoveAndEat", false, "if true, the brain can move and eat in the same world update");
+shared_ptr<ParameterLink<bool>> WeedWorld::senseDownPL = Parameters::register_parameter("WORLD_BERRY-senseDown", true, "if true, Agent can sense what it's standing on");
+shared_ptr<ParameterLink<bool>> WeedWorld::senseFrontPL = Parameters::register_parameter("WORLD_BERRY-senseFront", true, "if true, Agent can sense what's in front of it");
+shared_ptr<ParameterLink<bool>> WeedWorld::senseFrontSidesPL = Parameters::register_parameter("WORLD_BERRY-senseFrontSides", false, "if true, Agent can sense what's in front to the left and right of it");
+shared_ptr<ParameterLink<bool>> WeedWorld::senseWallsPL = Parameters::register_parameter("WORLD_BERRY-senseWalls", false, "if true, Agent can sense Walls");
+shared_ptr<ParameterLink<bool>> WeedWorld::senseOtherPL = Parameters::register_parameter("WORLD_BERRY-senseOther", false, "if true, Agents will be able to sense other agents (if there are other agents).");
 
-shared_ptr<ParameterLink<int>> BerryWorld::replacementDefaultRulePL = Parameters::register_parameter("WORLD_BERRY-replacementDefaultRule", -1, "-1 = random, 0 = no replacement, 1 = replace other (note: Food0, can be replace by Food0)");
-shared_ptr<ParameterLink<int>> BerryWorld::replacementFood0PL = Parameters::register_parameter("WORLD_BERRY-replacementFood0", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
-shared_ptr<ParameterLink<int>> BerryWorld::replacementFood1PL = Parameters::register_parameter("WORLD_BERRY-replacementFood1", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
-shared_ptr<ParameterLink<int>> BerryWorld::replacementFood2PL = Parameters::register_parameter("WORLD_BERRY-replacementFood2", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
-shared_ptr<ParameterLink<int>> BerryWorld::replacementFood3PL = Parameters::register_parameter("WORLD_BERRY-replacementFood3", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
-shared_ptr<ParameterLink<int>> BerryWorld::replacementFood4PL = Parameters::register_parameter("WORLD_BERRY-replacementFood4", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
-shared_ptr<ParameterLink<int>> BerryWorld::replacementFood5PL = Parameters::register_parameter("WORLD_BERRY-replacementFood5", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
-shared_ptr<ParameterLink<int>> BerryWorld::replacementFood6PL = Parameters::register_parameter("WORLD_BERRY-replacementFood6", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
-shared_ptr<ParameterLink<int>> BerryWorld::replacementFood7PL = Parameters::register_parameter("WORLD_BERRY-replacementFood7", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
-shared_ptr<ParameterLink<int>> BerryWorld::replacementFood8PL = Parameters::register_parameter("WORLD_BERRY-replacementFood8", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
+shared_ptr<ParameterLink<int>> WeedWorld::replacementDefaultRulePL = Parameters::register_parameter("WORLD_BERRY-replacementDefaultRule", -1, "-1 = random, 0 = no replacement, 1 = replace other (note: Food0, can be replace by Food0)");
+shared_ptr<ParameterLink<int>> WeedWorld::replacementFood0PL = Parameters::register_parameter("WORLD_BERRY-replacementFood0", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
+shared_ptr<ParameterLink<int>> WeedWorld::replacementFood1PL = Parameters::register_parameter("WORLD_BERRY-replacementFood1", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
+shared_ptr<ParameterLink<int>> WeedWorld::replacementFood2PL = Parameters::register_parameter("WORLD_BERRY-replacementFood2", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
+shared_ptr<ParameterLink<int>> WeedWorld::replacementFood3PL = Parameters::register_parameter("WORLD_BERRY-replacementFood3", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
+shared_ptr<ParameterLink<int>> WeedWorld::replacementFood4PL = Parameters::register_parameter("WORLD_BERRY-replacementFood4", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
+shared_ptr<ParameterLink<int>> WeedWorld::replacementFood5PL = Parameters::register_parameter("WORLD_BERRY-replacementFood5", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
+shared_ptr<ParameterLink<int>> WeedWorld::replacementFood6PL = Parameters::register_parameter("WORLD_BERRY-replacementFood6", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
+shared_ptr<ParameterLink<int>> WeedWorld::replacementFood7PL = Parameters::register_parameter("WORLD_BERRY-replacementFood7", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
+shared_ptr<ParameterLink<int>> WeedWorld::replacementFood8PL = Parameters::register_parameter("WORLD_BERRY-replacementFood8", -1, "when this type of food is replaced, replace with value, -1 = use 'replacement' value");
 
-shared_ptr<ParameterLink<bool>> BerryWorld::recordConsumptionRatioPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-recordConsumptionRatio", false, "if true, record greater of red/blue+1 or blue/red+1");
-shared_ptr<ParameterLink<bool>> BerryWorld::recordFoodListPL = Parameters::register_parameter("WORLD_BERRY-recordFoodList", false, "if true, record list of food eaten");
-shared_ptr<ParameterLink<bool>> BerryWorld::recordFoodListEatEmptyPL = Parameters::register_parameter("WORLD_BERRY-recordFoodListEatEmpty", false, "if true, foodList will include attempts to eat 0");
-shared_ptr<ParameterLink<bool>> BerryWorld::recordFoodListNoEatPL = Parameters::register_parameter("WORLD_BERRY-recordFoodListNoEat", false, "if true, if true foodList will include no eat (-1)");
+shared_ptr<ParameterLink<bool>> WeedWorld::recordConsumptionRatioPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-recordConsumptionRatio", false, "if true, record greater of red/blue+1 or blue/red+1");
+shared_ptr<ParameterLink<bool>> WeedWorld::recordFoodListPL = Parameters::register_parameter("WORLD_BERRY-recordFoodList", false, "if true, record list of food eaten");
+shared_ptr<ParameterLink<bool>> WeedWorld::recordFoodListEatEmptyPL = Parameters::register_parameter("WORLD_BERRY-recordFoodListEatEmpty", false, "if true, foodList will include attempts to eat 0");
+shared_ptr<ParameterLink<bool>> WeedWorld::recordFoodListNoEatPL = Parameters::register_parameter("WORLD_BERRY-recordFoodListNoEat", false, "if true, if true foodList will include no eat (-1)");
 
-shared_ptr<ParameterLink<int>> BerryWorld::alwaysStartOnFoodPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-alwaysStartOnFoodOfType", -1, "if -1 organisms are placed randomly. if > -1, all organisms will start on this type of food (must be < 9)");
+shared_ptr<ParameterLink<int>> WeedWorld::alwaysStartOnFoodPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-alwaysStartOnFoodOfType", -1, "if -1 organisms are placed randomly. if > -1, all organisms will start on this type of food (must be < 9)");
 
-shared_ptr<ParameterLink<bool>> BerryWorld::saveOrgActionsPL = Parameters::register_parameter("VISUALIZATION_MODE_WORLD_BERRY-saveOrgActions", false, "in visualize mode, save organisms actions to file with name [Org->ID]_actions.txt");
-shared_ptr<ParameterLink<string>> BerryWorld::visualizationFileNamePL = Parameters::register_parameter("VISUALIZATION_MODE_WORLD_BERRY-visualizationFileName", (string) "worldUpdatesFile.txt", "in visualize mode, visualization data will be written to this file.");
+shared_ptr<ParameterLink<bool>> WeedWorld::saveOrgActionsPL = Parameters::register_parameter("VISUALIZATION_MODE_WORLD_BERRY-saveOrgActions", false, "in visualize mode, save organisms actions to file with name [Org->ID]_actions.txt");
+shared_ptr<ParameterLink<string>> WeedWorld::visualizationFileNamePL = Parameters::register_parameter("VISUALIZATION_MODE_WORLD_BERRY-visualizationFileName", (string) "worldUpdatesFile.txt", "in visualize mode, visualization data will be written to this file.");
 
-shared_ptr<ParameterLink<string>> BerryWorld::mapFileListPL = Parameters::register_parameter("WORLD_BERRY-mapFileList", (string) "[]", "list of worlds in which to evaluate organism. If empty, random world will be created");
-shared_ptr<ParameterLink<string>> BerryWorld::mapFileWhichMapsPL = Parameters::register_parameter("WORLD_BERRY-mapFileWhichMaps", (string) "[random]", "if mapFileList is not empty, this parameter will determine which maps are seen by an organism in one evaluation.\n[random] select one random map\n[all] select all maps (from all files)\nif two values are present the first determines which files to pull maps from, the second which maps from those files\nthe options for the first position (file) are:\n  'all' (pull from all files)\n  '#' (pull from # random files - with possible repeats)\n  'u#' (pull from # unique files)\nthe options for the second position (map) are:\n  'all' (all maps in the file)\n  '#' (# random maps from file - with possible repeats)\n  'u#' (# unique maps from file)\nexample1: [all,u2] = from all files, 2 unique maps\nexample2: [2,1] one map from each two files (might be the same file twice)");
+shared_ptr<ParameterLink<string>> WeedWorld::mapFileListPL = Parameters::register_parameter("WORLD_BERRY-mapFileList", (string) "[]", "list of worlds in which to evaluate organism. If empty, random world will be created");
+shared_ptr<ParameterLink<string>> WeedWorld::mapFileWhichMapsPL = Parameters::register_parameter("WORLD_BERRY-mapFileWhichMaps", (string) "[random]", "if mapFileList is not empty, this parameter will determine which maps are seen by an organism in one evaluation.\n[random] select one random map\n[all] select all maps (from all files)\nif two values are present the first determines which files to pull maps from, the second which maps from those files\nthe options for the first position (file) are:\n  'all' (pull from all files)\n  '#' (pull from # random files - with possible repeats)\n  'u#' (pull from # unique files)\nthe options for the second position (map) are:\n  'all' (all maps in the file)\n  '#' (# random maps from file - with possible repeats)\n  'u#' (# unique maps from file)\nexample1: [all,u2] = from all files, 2 unique maps\nexample2: [2,1] one map from each two files (might be the same file twice)");
 
-shared_ptr<ParameterLink<bool>> BerryWorld::alwaysEatPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-alwaysEat", false, "if true, brain will only have 2 outputs (0 0 : no action, 1 0 : left, 0 1 : right, 1 1 : move). Organism will always eat if food is present.");
-shared_ptr<ParameterLink<double>> BerryWorld::rewardSpatialNoveltyPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-rewardSpatialNovelty", 0.0, "reward added to score every time organism moves on a new location");
+shared_ptr<ParameterLink<bool>> WeedWorld::alwaysEatPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-alwaysEat", false, "if true, brain will only have 2 outputs (0 0 : no action, 1 0 : left, 0 1 : right, 1 1 : move). Organism will always eat if food is present.");
+shared_ptr<ParameterLink<double>> WeedWorld::rewardSpatialNoveltyPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-rewardSpatialNovelty", 0.0, "reward added to score every time organism moves on a new location");
 
-shared_ptr<ParameterLink<bool>> BerryWorld::relativeScoringPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-relativeScoring", false, "score will be divided by the value of the positively scoring food on the initial map (useful when replacement = 0)");
-shared_ptr<ParameterLink<int>> BerryWorld::boarderEdgePL = Parameters::register_parameter("WORLD_BERRY-boarderEdge", 0, "edge (may overlap wall) that will be left empty (food0)");
+shared_ptr<ParameterLink<bool>> WeedWorld::relativeScoringPL = Parameters::register_parameter("WORLD_BERRY_ADVANCED-relativeScoring", false, "score will be divided by the value of the positively scoring food on the initial map (useful when replacement = 0)");
+shared_ptr<ParameterLink<int>> WeedWorld::boarderEdgePL = Parameters::register_parameter("WORLD_BERRY-boarderEdge", 0, "edge (may overlap wall) that will be left empty (food0)");
 
-shared_ptr<ParameterLink<bool>> BerryWorld::senseVisitedPL = Parameters::register_parameter("WORLD_BERRY-senseVisited", false, "organism can sense if any organism has visited here");
+shared_ptr<ParameterLink<bool>> WeedWorld::senseVisitedPL = Parameters::register_parameter("WORLD_BERRY-senseVisited", false, "organism can sense if any organism has visited here");
 
-shared_ptr<ParameterLink<string>> BerryWorld::fixedStartXRangePL = Parameters::register_parameter("WORLD_BERRY-fixedStartXRange", (string) "[-1]", "range for start location for organism (i.e. [x] for a fixed value, [x,y] to place in range), [-1] = random");
-shared_ptr<ParameterLink<string>> BerryWorld::fixedStartYRangePL = Parameters::register_parameter("WORLD_BERRY-fixedStartYRange", (string) "[-1]", "range for start location for organism (i.e. [x] for a fixed value, [x,y] to place in range), [-1] = random");
-shared_ptr<ParameterLink<int>> BerryWorld::fixedStartFacingPL = Parameters::register_parameter("WORLD_BERRY-fixedStartFacing", -1, "start facing direction (range 0-7) for organism, -1 = random");
+shared_ptr<ParameterLink<string>> WeedWorld::fixedStartXRangePL = Parameters::register_parameter("WORLD_BERRY-fixedStartXRange", (string) "[-1]", "range for start location for organism (i.e. [x] for a fixed value, [x,y] to place in range), [-1] = random");
+shared_ptr<ParameterLink<string>> WeedWorld::fixedStartYRangePL = Parameters::register_parameter("WORLD_BERRY-fixedStartYRange", (string) "[-1]", "range for start location for organism (i.e. [x] for a fixed value, [x,y] to place in range), [-1] = random");
+shared_ptr<ParameterLink<int>> WeedWorld::fixedStartFacingPL = Parameters::register_parameter("WORLD_BERRY-fixedStartFacing", -1, "start facing direction (range 0-7) for organism, -1 = random");
 
 
-shared_ptr<ParameterLink<int>> BerryWorld::repeatsPL = Parameters::register_parameter("WORLD_BERRY-repeats", 3, "Number of times to test each Organism per generation");
-shared_ptr<ParameterLink<bool>> BerryWorld::groupEvaluationPL = Parameters::register_parameter("WORLD_BERRY-groupEvaluation", false, "if true, evaluate population concurrently");
+shared_ptr<ParameterLink<int>> WeedWorld::repeatsPL = Parameters::register_parameter("WORLD_BERRY-repeats", 3, "Number of times to test each Organism per generation");
+shared_ptr<ParameterLink<bool>> WeedWorld::groupEvaluationPL = Parameters::register_parameter("WORLD_BERRY-groupEvaluation", false, "if true, evaluate population concurrently");
 
 // load a line from FILE. IF the line is empty or a comment (starts with #), skip line.
 // if the line is not empty/comment, clean ss and load line.
 // rawLine is the string version of the same data as ss
 
-bool BerryWorld::WorldMap::loadMap(ifstream& FILE, const string _fileName, shared_ptr<ParametersTable> parentPT) {
+bool WeedWorld::WorldMap::loadMap(ifstream& FILE, const string _fileName, shared_ptr<ParametersTable> parentPT) {
 	fileName = _fileName;
 	string parameterName, parameterValue;
 	grid.resize(0);
@@ -153,7 +153,7 @@ bool BerryWorld::WorldMap::loadMap(ifstream& FILE, const string _fileName, share
 	return done;
 }
 
-BerryWorld::BerryWorld(shared_ptr<ParametersTable> _PT) :
+WeedWorld::WeedWorld(shared_ptr<ParametersTable> _PT) :
 		AbstractWorld(_PT) {
 
 	worldUpdates = (PT == nullptr) ? worldUpdatesPL->lookup() : PT->lookupInt("WORLD_BERRY-worldUpdates");
@@ -253,7 +253,7 @@ BerryWorld::BerryWorld(shared_ptr<ParametersTable> _PT) :
 	/////////////////////////////////////////////////////////////////////////////////////
 
 	if (mapFileList.size() > 0) {
-		cout << "BerryWorld loading maps..." << endl;
+		cout << "WeedWorld loading maps..." << endl;
 
 		for (auto fileName : mapFileList) {
 			worldMaps[fileName] = map<string, WorldMap>();
@@ -277,7 +277,7 @@ BerryWorld::BerryWorld(shared_ptr<ParametersTable> _PT) :
 	}
 
 	if (foodTypes < 1 || foodTypes > 8) {
-		cout << "In BerryWorld you either have too few or too many foodTypes (must be >0 and <=8)\n\nExiting\n\n";
+		cout << "In WeedWorld you either have too few or too many foodTypes (must be >0 and <=8)\n\nExiting\n\n";
 		exit(1);
 	}
 	if (alwaysEat) {
@@ -289,7 +289,7 @@ BerryWorld::BerryWorld(shared_ptr<ParametersTable> _PT) :
 
 	inputNodesCount = senseDown * (foodTypes + senseVisited) + ((senseFront * (foodTypes + senseVisited)) + senseWalls + senseOther) + (2 * (senseFrontSides * (foodTypes + senseVisited + senseWalls + senseOther)));
 
-	cout << "BerryWorld requires brains with at least " << inputNodesCount + outputNodesCount << " nodes.\n";
+	cout << "WeedWorld requires brains with at least " << inputNodesCount + outputNodesCount << " nodes.\n";
 	if (inputNodesCount == 0) {
 		cout << "    " << inputNodesCount << " Inputs\t No Inputs\n";
 		cout << "    " << outputNodesCount << " Outputs\t nodes 0 to " << outputNodesCount - 1 << "\n";
@@ -345,7 +345,7 @@ BerryWorld::BerryWorld(shared_ptr<ParametersTable> _PT) :
 	}
 }
 
-void BerryWorld::printGrid(vector<int> grid, pair<int, int> loc, int facing) {
+void WeedWorld::printGrid(vector<int> grid, pair<int, int> loc, int facing) {
 	for (int y = 0; y < WorldY; y++) {
 		for (int x = 0; x < WorldX; x++) {
 			if ((x == loc.first) && (y == loc.second)) {
@@ -364,7 +364,7 @@ void BerryWorld::printGrid(vector<int> grid, pair<int, int> loc, int facing) {
 	cout << "\n";
 }
 
-void BerryWorld::runWorld(shared_ptr<Group> group, int analyse, int visualize, int debug) {
+void WeedWorld::runWorld(shared_ptr<Group> group, int analyse, int visualize, int debug) {
 
 	int numWorlds = 1;
 	int howManyFiles;
@@ -417,7 +417,7 @@ void BerryWorld::runWorld(shared_ptr<Group> group, int analyse, int visualize, i
 			} else if (mapFileWhichMaps[0][0] == 'u') { //pull some number of unique files
 				load_value(mapFileWhichMaps[0].substr(1, mapFileWhichMaps[0].size() - 1), howManyFiles);
 				if (howManyFiles > (int) worldMaps.size()) {
-					cout << "  in BerryWorld, selecting worlds from file... " << howManyFiles << " unique files are being requested, but only " << worldMaps.size() << " files have been loaded!\n  Exiting." << endl;
+					cout << "  in WeedWorld, selecting worlds from file... " << howManyFiles << " unique files are being requested, but only " << worldMaps.size() << " files have been loaded!\n  Exiting." << endl;
 					exit(1);
 				} else { // select howManyFiles unique files
 					set<int> picks;
@@ -448,7 +448,7 @@ void BerryWorld::runWorld(shared_ptr<Group> group, int analyse, int visualize, i
 					if (mapFileWhichMaps[1][0] == 'u') { //pull some number of unique Maps from each file
 						load_value(mapFileWhichMaps[1].substr(1, mapFileWhichMaps[1].size() - 1), howManyMaps);
 						if (howManyMaps > (int) file.size()) {
-							cout << "  in BerryWorld, selecting worlds from file... " << howManyMaps << " unique maps are being requested, but file \"" << fileName << "\" only has " << file.size() << " maps!\n  Exiting." << endl;
+							cout << "  in WeedWorld, selecting worlds from file... " << howManyMaps << " unique maps are being requested, but file \"" << fileName << "\" only has " << file.size() << " maps!\n  Exiting." << endl;
 							exit(1);
 						} else { // select howManyMaps unique maps from file
 							set<int> picks;
@@ -557,7 +557,7 @@ void BerryWorld::runWorld(shared_ptr<Group> group, int analyse, int visualize, i
 		vector<int> facing;
 
 		if ((int) group->population.size() > ((borderWalls) ? ((WorldX - 2) * (WorldY - 2) - randomWalls) : ((WorldX) * (WorldY) - randomWalls))) {
-			cout << "Berry world is too small. There are more organisms then space in the world.\n";
+			cout << "Weed world is too small. There are more organisms then space in the world.\n";
 			string RW = (borderWalls) ? "on" : "off";
 			int totalSpaces = (borderWalls) ? ((WorldX - 2) * (WorldY - 2) - randomWalls) : ((WorldX) * (WorldY) - randomWalls);
 			cout << "World is " << WorldX << " by " << WorldY << ". Border walls are " << RW << " and there are " << randomWalls << " random walls.\n";
@@ -571,7 +571,7 @@ void BerryWorld::runWorld(shared_ptr<Group> group, int analyse, int visualize, i
 			pair<int, int> newLocation = { Random::getIndex(WorldX), Random::getIndex(WorldY) };
 			int c = 0;
 			if (alwaysStartOnFood != -1 && (fixedStartXMin != -1 || fixedStartYMin != -1)) {
-				cout << "  A problem has been encounter in BerryWorld. a fixedStart value (range) has been set at the same time as alwaysStartOnFood... please pick one or the other./n  Exiting.";
+				cout << "  A problem has been encounter in WeedWorld. a fixedStart value (range) has been set at the same time as alwaysStartOnFood... please pick one or the other./n  Exiting.";
 				exit(1);
 			}
 			if (alwaysStartOnFood > -1) {
@@ -649,7 +649,7 @@ void BerryWorld::runWorld(shared_ptr<Group> group, int analyse, int visualize, i
 		int orgIndex;
 
 		if (visualize) {  // save state of world before we get started.
-			BerryWorld::SaveWorldState(visualizationFileName, grid, visitedGrid, currentLocation, facing, true);
+			WeedWorld::SaveWorldState(visualizationFileName, grid, visitedGrid, currentLocation, facing, true);
 		}
 
 		int realWorldUpdates = (worldUpdatesBaisedOnInitial <= 0) ? worldUpdates : (int)MAXSCORE * worldUpdatesBaisedOnInitial;
@@ -901,7 +901,7 @@ void BerryWorld::runWorld(shared_ptr<Group> group, int analyse, int visualize, i
 				}
 			}  // end world evaluation loop
 			if (visualize) {
-				BerryWorld::SaveWorldState(visualizationFileName, grid, visitedGrid, currentLocation, facing);
+				WeedWorld::SaveWorldState(visualizationFileName, grid, visitedGrid, currentLocation, facing);
 			}
 		}
 
@@ -1049,7 +1049,7 @@ void BerryWorld::runWorld(shared_ptr<Group> group, int analyse, int visualize, i
 	}
 }
 
-void BerryWorld::SaveWorldState(string fileName, vector<int> grid, vector<int> vistedGrid, vector<pair<int, int>> currentLocation, vector<int> facing, bool reset) {
+void WeedWorld::SaveWorldState(string fileName, vector<int> grid, vector<int> vistedGrid, vector<pair<int, int>> currentLocation, vector<int> facing, bool reset) {
 
 	string stateNow = "";
 
